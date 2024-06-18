@@ -40,22 +40,22 @@ function kzeni_plugin_theme_update_email_on_failure(
 	$enabled,
 	$update_results = []
 ) {
-	if (
-		get_option("kzeni_disable_theme_plugin_update_emails_disable_all") ===
-			true ||
-		get_option("kzeni_disable_theme_plugin_update_emails_disable_all") ===
-			"true"
-	) {
-		// If disable failures as well (disable all) is enabled (not the default so just seeing if it's set to true or not is enough to check)
-		return false;
-	} else {
-		foreach ($update_results as $update_result) {
-			if (true !== $update_result->result) {
-				return true;
-			}
-		}
-		return false;
+	$disable_all = get_option("kzeni_disable_theme_plugin_update_emails_disable_all");
+
+	if (in_array($disable_all, [true, "true"], true)) {
+	    return false;
 	}
+  
+	// Loop through update results
+	foreach ( $update_results as $update_result ) {
+		// If any update result is not true (failed update)
+		if ( true !== $update_result->result ) {
+			return true;
+		}
+	}
+
+	// If no failed updates have been found
+	return false;
 }
 
 // Add options to WordPress' General Settings page
